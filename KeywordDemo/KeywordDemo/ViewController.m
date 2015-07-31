@@ -33,7 +33,7 @@
     txtKeyword.autocorrectionType = UITextAutocorrectionTypeNo;
     
     [scrollKeyword addSubview:txtKeyword];
-        [self.viewKeyword addSubview:scrollKeyword];
+    [self.viewKeyword addSubview:scrollKeyword];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -61,7 +61,7 @@
 
             keywordCount = keywordCount + 1;
             xForNewKeyword = xForNewKeyword + frameSize.width + 5;
-            NSLog(@"keywordCount : %d, xForNewKeyword : %f",keywordCount,xForNewKeyword);
+//            NSLog(@"keywordCount : %d, xForNewKeyword : %f",keywordCount,xForNewKeyword);
             [scrollKeyword addSubview:lbl];
             txtKeyword.text = nil;
             [keywords addObject:someString];
@@ -70,10 +70,9 @@
             tap.numberOfTapsRequired = 1;
             [lbl addGestureRecognizer:tap];
             lbl.userInteractionEnabled = YES;
-            lbl.tag = keywordCount;
         }
         dispatch_async(dispatch_get_main_queue(), ^{
-            NSLog(@"change text frame CGRectMake(%f,%f,%f, %f)",xForNewKeyword, txtKeyword.frame.origin.y, txtKeyword.frame.size.width, txtKeyword.frame.size.height);
+//            NSLog(@"change text frame CGRectMake(%f,%f,%f, %f)",xForNewKeyword, txtKeyword.frame.origin.y, txtKeyword.frame.size.width, txtKeyword.frame.size.height);
             
             [txtKeyword setFrame:CGRectMake(xForNewKeyword, txtKeyword.frame.origin.y, txtKeyword.frame.size.width, txtKeyword.frame.size.height)];
         });
@@ -81,14 +80,46 @@
     }
     return YES;
 }
+
+
+#pragma mark -
+#pragma mark - Gesture recognizer edkeevents
+#pragma mark -
+
 -(void)removeLabel:(UIGestureRecognizer *)gesture{
-    int tag = gesture.view.tag;
     UILabel *lbl = (UILabel *)gesture.view;
     [keywords removeObject:lbl.text];
-    [lbl removeFromSuperview];
+    for (UIView *view in scrollKeyword.subviews) {
+        if ([view isKindOfClass:[UILabel class]]) {
+            [view removeFromSuperview];
+        }
+    }
+    xForNewKeyword = 0;
+    keywordCount = 0;
+    for (NSString *word in keywords) {
+//        NSLog(@"Word : %@",word);
+        UIFont *yourFont = [UIFont systemFontOfSize:14.0];
+        CGSize frameSize = [word sizeWithFont:yourFont];
+        UILabel *lbl = [[UILabel alloc]initWithFrame:CGRectMake(xForNewKeyword, 10, frameSize.width, txtKeyword.frame.size.height)];
+        lbl.text = word;
+        lbl.font = [UIFont systemFontOfSize:13.0];
+        lbl.backgroundColor = [UIColor redColor];
+        
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(removeLabel:)];
+        tap.numberOfTapsRequired = 1;
+        [lbl addGestureRecognizer:tap];
+        lbl.userInteractionEnabled = YES;
+
+        keywordCount = keywordCount + 1;
+        xForNewKeyword = xForNewKeyword + frameSize.width + 5;
+        [scrollKeyword addSubview:lbl];
+    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        
+        [txtKeyword setFrame:CGRectMake(xForNewKeyword, txtKeyword.frame.origin.y, txtKeyword.frame.size.width, txtKeyword.frame.size.height)];
+    });
+    scrollKeyword.contentSize = CGSizeMake(xForNewKeyword+txtKeyword.frame.size.width, scrollKeyword.frame.size.height);
+    NSLog(@"Remaining Keywords : %@",keywords);
 }
 
-#pragma mark - 
-#pragma mark - Gesture recognizer events
-#pragma mark -
 @end
