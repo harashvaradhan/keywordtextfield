@@ -11,7 +11,7 @@
 @interface ViewController ()<UITextFieldDelegate,UIScrollViewDelegate>{
     int keywordCount;
     float xForNewKeyword;
-    NSMutableArray *keywords;
+    NSMutableSet *keywords;
 }
 
 @end
@@ -58,12 +58,19 @@
             lbl.text = someString;
             lbl.font = [UIFont systemFontOfSize:13.0];
             lbl.backgroundColor = [UIColor redColor];
+
             keywordCount = keywordCount + 1;
             xForNewKeyword = xForNewKeyword + frameSize.width + 5;
             NSLog(@"keywordCount : %d, xForNewKeyword : %f",keywordCount,xForNewKeyword);
             [scrollKeyword addSubview:lbl];
             txtKeyword.text = nil;
             [keywords addObject:someString];
+            
+            UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(removeLabel:)];
+            tap.numberOfTapsRequired = 1;
+            [lbl addGestureRecognizer:tap];
+            lbl.userInteractionEnabled = YES;
+            lbl.tag = keywordCount;
         }
         dispatch_async(dispatch_get_main_queue(), ^{
             NSLog(@"change text frame CGRectMake(%f,%f,%f, %f)",xForNewKeyword, txtKeyword.frame.origin.y, txtKeyword.frame.size.width, txtKeyword.frame.size.height);
@@ -74,13 +81,13 @@
     }
     return YES;
 }
-
--(void)scrollViewDidScroll:(UIScrollView *)scrollView{
-    NSLog(@"scrollViewDidScroll ");
-    NSLog(@"keywordCount : %d, xForNewKeyword : %f",keywordCount,xForNewKeyword);
-
-    [txtKeyword setFrame:CGRectMake(xForNewKeyword, txtKeyword.frame.origin.y, txtKeyword.frame.size.width, txtKeyword.frame.size.height)];
+-(void)removeLabel:(UIGestureRecognizer *)gesture{
+    int tag = gesture.view.tag;
+    UILabel *lbl = (UILabel *)gesture.view;
+    [keywords removeObject:lbl.text];
+    [lbl removeFromSuperview];
 }
+
 #pragma mark - 
 #pragma mark - Gesture recognizer events
 #pragma mark -
