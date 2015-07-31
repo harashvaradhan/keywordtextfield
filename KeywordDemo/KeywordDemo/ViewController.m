@@ -21,7 +21,7 @@
 @synthesize txtKeyword;
 - (void)viewDidLoad {
     [super viewDidLoad];
-    keywords = [[NSMutableArray alloc]init];
+    keywords = [[NSMutableSet alloc]init];
     
     scrollKeyword = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 20, self.viewKeyword.frame.size.width, 60)];
     scrollKeyword.backgroundColor = [UIColor blackColor];
