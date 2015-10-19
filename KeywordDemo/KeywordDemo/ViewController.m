@@ -34,6 +34,40 @@
     
     [scrollKeyword addSubview:txtKeyword];
     [self.viewKeyword addSubview:scrollKeyword];
+    //for Demo not related with actual project
+//    NSString *apiTime = @"14:30:00";
+    NSString *apiTime = @"00:30:00";
+    NSLog(@"API Time : %@",apiTime);
+    NSString *finalTime;
+    
+    NSArray *amArray = @[@"00",@"01",@"02",@"03",@"04",@"05",@"06",@"07",@"08",@"09",@"10",@"11"];
+    
+    NSArray *pmArray = @[@"12",@"13",@"14",@"15",@"16",@"17",@"18",@"19",@"20",@"21",@"22",@"23"];
+   
+    NSArray *timeArray = [apiTime componentsSeparatedByString:@":"];
+    NSLog(@"TimeArray : %@",timeArray);
+    
+    if([amArray containsObject:[timeArray objectAtIndex:0]]){
+        if([amArray indexOfObject:[timeArray objectAtIndex:0]] == 0){
+            finalTime = [NSString stringWithFormat:@"12:%@ AM",[timeArray objectAtIndex:1]];
+        }else{
+            finalTime = [NSString stringWithFormat:@"%@:%@ AM",[timeArray objectAtIndex:0],[timeArray objectAtIndex:1]];
+        }
+    }else{
+        NSUInteger index = [pmArray indexOfObject:[timeArray objectAtIndex:0]];
+        NSLog(@"Index : %lu",(unsigned long)index);
+        finalTime = [NSString stringWithFormat:@"%@:%@ PM",[amArray objectAtIndex:index],[timeArray objectAtIndex:1]];
+    }
+    
+    NSLog(@"Final Time : %@",finalTime);
+    
+    /*NSDateFormatter *formatterTime = [[NSDateFormatter alloc]init];
+    [formatterTime setDateFormat:@"HH:mm:ss's'"];
+    NSDate *time24hr = [formatterTime dateFromString:[NSString stringWithFormat:@"%@s",apiTime]];
+    [formatterTime setDateFormat:@"h:mm a"];
+    NSString *time12hr = [formatterTime stringFromDate:time24hr];
+    NSLog(@"TwelveHour : %@",time12hr);*/
+    //for Demo not related with actual project
 }
 
 - (void)didReceiveMemoryWarning {
